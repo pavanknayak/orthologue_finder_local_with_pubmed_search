@@ -1,5 +1,5 @@
 # orthologue_finder_local_with_pubmed_search
-Python program for automating literature searches for gene lists produced from Next Generation Sequencing (NGS) screens
+#Python program for automating literature searches for gene lists produced from Next Generation Sequencing (NGS) screens
 
 import requests, sys
 import pandas as pd
