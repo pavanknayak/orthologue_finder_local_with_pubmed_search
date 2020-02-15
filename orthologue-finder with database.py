@@ -1,5 +1,7 @@
+
 import requests
 # import sys
+import requests, sys
 import pandas as pd
 import bs4
 import time
@@ -10,6 +12,7 @@ import os
 gene_list_path = r"C:\Users\Pavan Nayak\Documents\Programming Practice\Tools\ensembl_gene_lists"
 orth_list_path = r"C:\Users\Pavan Nayak\Documents\Programming Practice\Tools\orthologous_gene_lists"
 input_file_path = r"C:\Users\Pavan Nayak\Documents\Programming Practice\Tools"
+
 human_gl = os.path.join(gene_list_path, "human_genes.txt")
 zebrafish_gl = os.path.join(gene_list_path, "zebrafish_genes.txt")
 mouse_gl = os.path.join(gene_list_path, "mouse_genes.txt")
@@ -28,7 +31,14 @@ rat2hum = os.path.join(orth_list_path, "rat2human.txt")
 rat2zeb = os.path.join(orth_list_path, "rat2zebrafish.txt")
 rat2mou = os.path.join(orth_list_path, "rat2mouse.txt")
 
+
 human_genelist = pd.read_csv(human_gl)
+zebrafish_genelist = pd.read_csv(zebrafish_gl)
+mouse_genelist = pd.read_csv(mouse_gl)
+rat_genelist = pd.read_csv(rat_gl)
+
+
+hum_genelist = pd.read_csv(human_gl)
 zebrafish_genelist = pd.read_csv(zebrafish_gl)
 mouse_genelist = pd.read_csv(mouse_gl)
 rat_genelist = pd.read_csv(rat_gl)
@@ -46,6 +56,7 @@ rat2human = pd.read_csv(rat2hum)
 rat2zebrafish = pd.read_csv(rat2zeb)
 rat2mouse = pd.read_csv(rat2mou)
 
+
 startTime = time.time()
 # IMPORTANT change this next line to the name of your ENSEMBL gene ID list. this is your input
 orth_df = pd.read_excel(os.path.join(input_file_path, 'ens-gene-list-top-500.xlsx'))
@@ -55,6 +66,19 @@ orth_df = pd.read_excel(os.path.join(input_file_path, 'ens-gene-list-top-500.xls
 # I created a local gene ortho/homology finder for each species for human, mouse, rat, and zebrafish so far
 # each function takes as input a string ensembl ID and returns 3 lists, one list for the homologs for each species for your input gene
 # These will be called in the local multispecies homolog finder created later to change the overall input dataframe into one containing all the homologs for all genes in the list
+=======
+
+startTime = time.time()
+#IMPORTANT change this next line to the name of your ENSEMBL gene ID list. this is your input
+orth_df = pd.read_excel('test-ens-gene-list-short1.xlsx')
+
+
+
+#these four functions are to search the dataframes for homologous genes for a particular gene input for each different species
+#I created a local gene ortho/homology finder for each species for human, mouse, rat, and zebrafish so far
+#each function takes as input a string ensembl ID and returns 3 lists, one list for the homologs for each species for your input gene
+#These will be called in the local multispecies homolog finder created later to change the overall input dataframe into one containing all the homologs for all genes in the list
+
 
 def local_homfinder_human(ens_string):
     hl_human2rat = []
@@ -76,7 +100,10 @@ def local_homfinder_human(ens_string):
     return hl_human2rat, hl_human2mouse, hl_human2zebrafish
 
 
+
 def local_homfinder_rat(ens_string):
+
+
     hl_rat2human = []
     hl_rat2mouse = []
     hl_rat2zebrafish = []
@@ -136,6 +163,7 @@ def local_homfinder_zebrafish(ens_string):
     return hl_zebrafish2human, hl_zebrafish2rat, hl_zebrafish2mouse
 
 
+
 def local_multi_species_homfinder_zeb(orth_df):
     for a in range(0, 3):
 
@@ -169,6 +197,32 @@ def local_multi_species_homfinder_zeb(orth_df):
 
                 for e in range(0, len(genetemp[a])):
                     orth_df.iloc[b, homcount + e] = genetemp[a][e]
+
+def local_multi_species_homfinder_zeb(orth_df):
+    for a in range(0, len(orth_df)):
+        genetemp = local_homfinder_zebrafish(orth_df.iloc[a, 0])
+        for b in range(0, len(genetemp)):
+            counter = 1
+            namegen = list(range(0, 500))
+            namelist = ["human", "rat", "mouse"]
+            homcount = len(orth_df.columns)
+            if len(genetemp[b]) == 1:
+                orth_df.iloc[a, homcount-1] = genetemp[b][0]
+
+            if len(genetemp[b]) >  counter:
+
+                for c in range(0, len(genetemp[b])-counter):
+                    orth_df.insert(len(orth_df.columns) + c, namelist[b] + ' homolog ' + namegen[0])
+                    del namegene[0]
+                    counter = len(genetemp[b])
+                for d in range(0, len(genetemp[b])):
+                    orth_df.iloc[a, homcount-1+d] = genetemp[b][d]
+
+            if len(genetemp[b]) < counter and not len(genetemp[b]) == 0:
+
+                for e in range(0,len(genetemp[b])):
+                    orth_df.iloc[a, homcount-1 + e] = genetemp[b][e]
+
 
     return orth_df
 
@@ -323,6 +377,9 @@ def ens_id_finder(id_table):
                 
         
     return id_table
+
+
+
 
 
 
