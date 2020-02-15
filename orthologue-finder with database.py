@@ -66,7 +66,6 @@ orth_df = pd.read_excel(os.path.join(input_file_path, 'ens-gene-list-top-500.xls
 # I created a local gene ortho/homology finder for each species for human, mouse, rat, and zebrafish so far
 # each function takes as input a string ensembl ID and returns 3 lists, one list for the homologs for each species for your input gene
 # These will be called in the local multispecies homolog finder created later to change the overall input dataframe into one containing all the homologs for all genes in the list
-=======
 
 startTime = time.time()
 #IMPORTANT change this next line to the name of your ENSEMBL gene ID list. this is your input
