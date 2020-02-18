@@ -48,7 +48,7 @@ rat2mouse = pd.read_csv(rat2mou)
 
 startTime = time.time()
 # IMPORTANT change this next line to the name of your ENSEMBL gene ID list. this is your input
-orth_df = pd.read_excel(os.path.join(input_file_path, 'ens-gene-list-top-500.xlsx'))
+orth_df = pd.read_excel(os.path.join(input_file_path, 'test-ens-gene-list-short1.xlsx'))
 
 
 # these four functions are to search the dataframes for homologous genes for a particular gene input for each different species
@@ -135,7 +135,8 @@ def local_homfinder_zebrafish(ens_string):
 
     return hl_zebrafish2human, hl_zebrafish2rat, hl_zebrafish2mouse
 
-
+#These four functions call the previous local_homfinder functions and use them to identify all of the homologs for all genes in an
+#inputted dataframe.
 def local_multi_species_homfinder_zeb(orth_df):
     for a in range(0, 3):
 
@@ -172,6 +173,117 @@ def local_multi_species_homfinder_zeb(orth_df):
 
     return orth_df
 
+def local_multi_species_homfinder_hum(orth_df):
+    for a in range(0, 3):
+
+        counter = 1
+        namegen = list(range(0, 500))
+        namelist = ["rat", "mouse", "zebrafish"]
+        homcount = len(orth_df.columns)
+        for b in range(0, len(orth_df)):
+            namecount = len(orth_df.columns)
+            genetemp = local_homfinder_human(orth_df.iloc[b, 0])
+            if len(genetemp[a]) == 1 and namecount == homcount:
+                orth_df.insert(namecount, namelist[a] + ' homolog', np.nan)
+                orth_df.iloc[b, homcount] = genetemp[a][0]
+
+            elif len(genetemp[a]) == 1 and not namecount == homcount:
+                orth_df.iloc[b, homcount] = genetemp[a][0]
+
+            elif len(genetemp[a]) > counter:
+
+                for c in range(0, len(genetemp[a]) - counter + 1):
+                    orth_df.insert(namecount + c, namelist[a] + ' homolog ' + str(namegen[0]), np.nan)
+                    del namegen[0]
+                    counter = len(genetemp[a])
+                for d in range(0, len(genetemp[a])):
+                    orth_df.iloc[b, homcount + d] = genetemp[a][d]
+
+            if len(genetemp[a]) == 0:
+                continue
+
+            elif len(genetemp[a]) < counter and not len(genetemp[a]) == 0:
+
+                for e in range(0, len(genetemp[a])):
+                    orth_df.iloc[b, homcount + e] = genetemp[a][e]
+
+    return orth_df
+
+
+def local_multi_species_homfinder_rat(orth_df):
+    for a in range(0, 3):
+
+        counter = 1
+        namegen = list(range(0, 500))
+        namelist = ["human", "mouse", "zebrafish"]
+        homcount = len(orth_df.columns)
+        for b in range(0, len(orth_df)):
+            namecount = len(orth_df.columns)
+            genetemp = local_homfinder_rat(orth_df.iloc[b, 0])
+            if len(genetemp[a]) == 1 and namecount == homcount:
+                orth_df.insert(namecount, namelist[a] + ' homolog', np.nan)
+                orth_df.iloc[b, homcount] = genetemp[a][0]
+
+            elif len(genetemp[a]) == 1 and not namecount == homcount:
+                orth_df.iloc[b, homcount] = genetemp[a][0]
+
+            elif len(genetemp[a]) > counter:
+
+                for c in range(0, len(genetemp[a]) - counter + 1):
+                    orth_df.insert(namecount + c, namelist[a] + ' homolog ' + str(namegen[0]), np.nan)
+                    del namegen[0]
+                    counter = len(genetemp[a])
+                for d in range(0, len(genetemp[a])):
+                    orth_df.iloc[b, homcount + d] = genetemp[a][d]
+
+            if len(genetemp[a]) == 0:
+                continue
+
+            elif len(genetemp[a]) < counter and not len(genetemp[a]) == 0:
+
+                for e in range(0, len(genetemp[a])):
+                    orth_df.iloc[b, homcount + e] = genetemp[a][e]
+
+    return orth_df
+
+
+def local_multi_species_homfinder_mouse(orth_df):
+    for a in range(0, 3):
+
+        counter = 1
+        namegen = list(range(0, 500))
+        namelist = ["human", "rat", "zebrafish"]
+        homcount = len(orth_df.columns)
+        for b in range(0, len(orth_df)):
+            namecount = len(orth_df.columns)
+            genetemp = local_homfinder_mouse(orth_df.iloc[b, 0])
+            if len(genetemp[a]) == 1 and namecount == homcount:
+                orth_df.insert(namecount, namelist[a] + ' homolog', np.nan)
+                orth_df.iloc[b, homcount] = genetemp[a][0]
+
+            elif len(genetemp[a]) == 1 and not namecount == homcount:
+                orth_df.iloc[b, homcount] = genetemp[a][0]
+
+            elif len(genetemp[a]) > counter:
+
+                for c in range(0, len(genetemp[a]) - counter + 1):
+                    orth_df.insert(namecount + c, namelist[a] + ' homolog ' + str(namegen[0]), np.nan)
+                    del namegen[0]
+                    counter = len(genetemp[a])
+                for d in range(0, len(genetemp[a])):
+                    orth_df.iloc[b, homcount + d] = genetemp[a][d]
+
+            if len(genetemp[a]) == 0:
+                continue
+
+            elif len(genetemp[a]) < counter and not len(genetemp[a]) == 0:
+
+                for e in range(0, len(genetemp[a])):
+                    orth_df.iloc[b, homcount + e] = genetemp[a][e]
+
+    return orth_df
+
+
 #function to insert blank rows between all values of dataframe, to pre-allocate rows
 #for finding gene names and pubmed counts
 def pir(df):
@@ -204,7 +316,9 @@ def restruc_df(test_df):
 
     return test_df
 
-
+#local ensembl ID finder. After restructuring the dataframe to add spaces between each row item, we call this function
+#to do find the actual gene name for each ensembl ID in the dataframe, and add it to the cell directly underneath the respective ensembl_ID
+#then output the dataframe.
 def local_ens_id_finder(id_table):
     for a in range(0, len(id_table), 3):
         for b in range(0, len(id_table.columns)):
@@ -275,21 +389,22 @@ def  multi_species_homfinder(species_input):
     homcount =  len(orth_df.columns)
     #iterate through gene list and run homolog_finder function to find gene homologs and place them in separate columns next to original Ensembl ID
     for i in tqdm(range(0, len(orth_df))):
-        
+        namecount = len(orth_df.columns)
         gentemp = homolog_finder(orth_df.iloc[i][0], species_input)
         
         #if there are multiple homologs to the gene for that species,
         #create new columns, and enter those into the new columns
-        if len(gentemp) == 1:
-            
+        if len(gentemp) == 1 and namecount == homcount:
+            orth_df.insert(namecount, namelist[a] + ' homolog', np.nan)
             orth_df.iloc[i, homcount-1] = gentemp[0]
-        
-        
+
+        elif len(genetemp[a]) == 1 and not namecount == homcount:
+            orth_df.iloc[b, homcount] = genetemp[a][0]
         #we want to check if the number of homologs is greater than the number of columns created for this species
         #if it is, then make enough new columns to fit in the total number of orthologues
         #If enough columns are made already, add the extra homologs into the existing columns    
           
-        if len(gentemp) > counter:
+        elif len(gentemp) > counter:
                      
             for k in range(0, len(gentemp)-counter):
                 
@@ -396,16 +511,32 @@ def pubcrawl(dataframe, keyword):
             once = once.replace('<count>', '')
             once = once.replace('</count>', '')
             dataframe.iloc[x+1,y] = int(once)
-    
+    # create a last column for totals
+    dataframe = dataframe.assign(Total= np.nan)
+    # sum up counts for all genes at the end and place in the last column for each row
+    for p in range(2, len(dataframe), 3):
+        dataframe.iloc[p, len(dataframe.columns) - 1] = dataframe.iloc[p, :].sum(axis=0)
+
+    # add counts to the end of every row to help sort
+    dataframe.Total = dataframe.Total.bfill()
+    # create a helper column and fill with numbers to help sort but keep dataframe formatting
+    dataframe["helper"] = np.arange(len(dataframe))//3
+    # sort by helper values in descending order (highest to lowest pubmed article counts)
+    dataframe = dataframe.sort_values(['Total', 'helper'], ascending = False)
+    # remove the helper column
+    dataframe = dataframe.drop(columns = "helper")
+    # remove excess counts (not necessary, can improve aesthetically if desired)
+    for p in range(2, len(dataframe), 3):
+        dataframe.iloc[p - 1, len(dataframe.columns) - 1] = np.nan
+        dataframe.iloc[p - 2, len(dataframe.columns) - 1] = np.nan
+    return dataframe
 #IMPORTANT, CHANGE THE SEARCH TERM, WRITTEN HERE AS TENDON, TO WHATEVER YOU WISH TO SEARCH WITH YOUR GENES ON PUBMED    
 #pubcrawl(test_df, 'mechanical')
 
-#create a last column for totals
-#test_df = test_df.assign(Total= np.nan)
 
-#sum up counts for all genes at the end and place in the last column for each row
-#for p in range(2, len(test_df), 3):
-    test_df.iloc[p, len(test_df.columns)-1] = test_df.iloc[p, :].sum(axis=0)
+
+
+
     
 
 #add counts to the end of every row to help sort
@@ -418,10 +549,7 @@ def pubcrawl(dataframe, keyword):
 #test_df = test_df.drop(columns = "helper")
 
 
-#remove excess counts (not necessary, can improve aesthetically if desired)
-#for p in range(2, len(test_df), 3):
-#    test_df.iloc[p-1, len(test_df.columns)-1] = np.nan
-#    test_df.iloc[p-2, len(test_df.columns)-1] = np.nan
+
     
 print ('The script took {0} seconds !'.format(time.time() - startTime))
 
