@@ -1,6 +1,6 @@
 # Orthologue finder and NCBI searcher for ENSEMBL ID Gene Lists
 
-This python program is an improvement off of the initial Gene list NCBI searcher I created, shown here: [EE282 Final Project](https://github.com/pnayak93/ee282/blob/main/Final_Project_Writeup.md)
+This python program is an improvement off of the initial Gene list NCBI searcher I created, shown here: [EE282 Project](https://github.com/pnayak93/ee282/blob/main/Final_Project_Writeup.md)
 
 The original project consisted of a python script which took gene list outputs from a NGS experiment as input (either in ENSEMBL ID format or Conventional Gene name format) and returned the number of articles written on pubmed for each gene plus a user-inputted search term. For example, if the user input the search term "tendon development" or "ribosomal RNA", this would be searched with each gene in the user input gene list on the Pubmed API. Please see the EE282 writeup for more information.
 
